@@ -4,12 +4,19 @@ build-backend = "maturin"
 
 [project]
 name = "rstd"
+version = "0.1.0"
+description = "Python standard library modules written in Rust"
+readme = "README.md"
+authors = [{ name = "Jonathan Lopez", email = "jonathanglopez@gmail.com" }]
 requires-python = ">=3.13"
-classifiers = [
-  "Programming Language :: Rust",
-  "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
-]
-dynamic = ["version"]
+
 [tool.maturin]
 features = ["pyo3/extension-module"]
+module-name = "rstd._core"
+python-packages = ["rstd"]
+python-source = "src"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]
