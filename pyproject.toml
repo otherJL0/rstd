@@ -11,12 +11,5 @@ authors = [{ name = "Jonathan Lopez", email = "jonathanglopez@gmail.com" }]
 requires-python = ">=3.13"
 
 [tool.maturin]
+python-source = "python"
 features = ["pyo3/extension-module"]
-module-name = "rstd._core"
-python-packages = ["rstd"]
-python-source = "src"
-
-[dependency-groups]
-dev = [
-    "pytest>=8.3.4",
-]
