@@ -1,14 +1,19 @@
+mod math;
 use pyo3::prelude::*;
 
-/// Formats the sum of two numbers as string.
-#[pyfunction]
-fn sum_as_string(a: usize, b: usize) -> PyResult<String> {
-    Ok((a + b).to_string())
+fn register_math_submodule(parent_module: &Bound<'_, PyModule>) -> PyResult<()> {
+    let submodule = PyModule::new(parent_module.py(), "math")?;
+    submodule.add_function(wrap_pyfunction!(math::factorial, &submodule)?)?;
+    parent_module
+        .py()
+        .import("sys")?
+        .getattr("modules")?
+        .set_item("rstd.math", &submodule)?;
+    parent_module.add_submodule(&submodule)
 }
 
-/// A Python module implemented in Rust.
 #[pymodule]
 fn rstd(m: &Bound<'_, PyModule>) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(sum_as_string, m)?)?;
+    register_math_submodule(m)?;
     Ok(())
 }
