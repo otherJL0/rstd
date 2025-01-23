@@ -4,6 +4,9 @@ use pyo3::prelude::*;
 fn register_math_submodule(parent_module: &Bound<'_, PyModule>) -> PyResult<()> {
     let submodule = PyModule::new(parent_module.py(), "math")?;
     submodule.add_function(wrap_pyfunction!(math::factorial, &submodule)?)?;
+    submodule.add_function(wrap_pyfunction!(math::comb, &submodule)?)?;
+    submodule.add_function(wrap_pyfunction!(math::isqrt, &submodule)?)?;
+    submodule.add_function(wrap_pyfunction!(math::perm, &submodule)?)?;
     parent_module
         .py()
         .import("sys")?
