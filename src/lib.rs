@@ -1,3 +1,4 @@
+#![feature(const_for, test)]
 mod math;
 use pyo3::prelude::*;
 
