@@ -1,26 +1,65 @@
-use num_bigint::BigInt;
-use pyo3::prelude::*;
+use num_bigint::BigUint;
+use num_traits::One;
+use pyo3::{exceptions::PyValueError, prelude::*};
+
+fn factorial_u64(n: u64) -> u64 {
+    if n == 0 {
+        return 1;
+    }
+    let mut product = n;
+    for i in 1..n {
+        product *= i;
+    }
+    product
+}
+
+fn factorial_u128(n: u128) -> u128 {
+    let mut product = n;
+    for i in 1..n {
+        product *= i;
+    }
+    product
+}
+
+fn factorial_biguint(n: u64) -> BigUint {
+    let mut product = BigUint::one();
+    for i in 1..=n {
+        product *= BigUint::from(i);
+    }
+    product
+}
 
 #[inline(always)]
-fn _factorial(end: i64, start: i64) -> BigInt {
-    let mut product = BigInt::from(end);
+fn _factorial(end: u64, start: u64) -> BigUint {
+    let mut product = BigUint::from(end);
     for i in (start + 1..end).rev() {
-        product *= BigInt::from(i);
+        product *= BigUint::from(i);
     }
     product
 }
 
 #[pyfunction]
-pub fn factorial(n: i64) -> BigInt {
-    _factorial(0, n)
+pub fn factorial(n: i64) -> PyResult<BigUint> {
+    if n < 0 {
+        Err(PyValueError::new_err(
+            "factorial() not defined for negative values",
+        ))
+    } else if n < 21 {
+        Ok(BigUint::from(factorial_u64(n as u64)))
+    } else if n < 35 {
+        Ok(BigUint::from(factorial_u128(n as u128)))
+    } else {
+        Ok(factorial_biguint(n as u64))
+    }
 }
 
 #[pyfunction]
-pub fn comb(n: i64, k: i64) -> BigInt {
+pub fn comb(n: i64, k: i64) -> BigUint {
     if k > n {
-        return BigInt::ZERO;
+        return BigUint::ZERO;
     }
-    let k = k.min(n - k);
+    let k = k.min(n - k) as u64;
+    let n = n as u64;
     _factorial(n - k, n) / _factorial(0, k)
 }
 
@@ -50,12 +89,14 @@ pub fn isqrt(n: i64) -> PyResult<i64> {
 
 #[pyfunction]
 #[pyo3(signature = (n, k=None))]
-pub fn perm(n: i64, k: Option<i64>) -> BigInt {
+pub fn perm(n: i64, k: Option<i64>) -> BigUint {
+    let n = n as u64;
     match k {
         None => _factorial(0, n),
         Some(_k) => {
+            let _k = _k as u64;
             if _k > n {
-                BigInt::ZERO
+                BigUint::ZERO
             } else {
                 _factorial(n - _k, n)
             }
