@@ -1,3 +1,4 @@
+use crate::factorial_algorithms;
 use num_bigint::BigUint;
 use num_traits::One;
 use pyo3::{exceptions::PyValueError, prelude::*};
@@ -21,7 +22,8 @@ fn factorial_u128(n: u128) -> u128 {
     product
 }
 
-fn factorial_biguint(n: u64) -> BigUint {
+#[allow(dead_code)]
+fn factorial_naive(n: u64) -> BigUint {
     let mut product = BigUint::one();
     for i in 1..=n {
         product *= BigUint::from(i);
@@ -49,7 +51,7 @@ pub fn factorial(n: i64) -> PyResult<BigUint> {
     } else if n < 35 {
         Ok(BigUint::from(factorial_u128(n as u128)))
     } else {
-        Ok(factorial_biguint(n as u64))
+        Ok(factorial_algorithms::swinging_factorial(n as u64))
     }
 }
 
@@ -135,9 +137,27 @@ mod tests {
     }
 
     #[bench]
+    fn bench_naive_factorial(b: &mut Bencher) {
+        b.iter(|| {
+            (0..1500).for_each(|n| {
+                let _ = factorial(n);
+            })
+        })
+    }
+
+    #[bench]
+    fn bench_swinging_factorial(b: &mut Bencher) {
+        b.iter(|| {
+            (0..1500).for_each(|n| {
+                let _ = factorial_algorithms::swinging_factorial(n as u64);
+            })
+        })
+    }
+
+    #[bench]
     fn bench_binary_search_isqrt(b: &mut Bencher) {
         b.iter(|| {
-            (i64::MIN..i64::MAX).for_each(|n| {
+            (0..i64::MAX).for_each(|n| {
                 let _ = isqrt(n);
             });
         })

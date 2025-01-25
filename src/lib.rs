@@ -1,5 +1,7 @@
 #![feature(const_for, test)]
+mod factorial_algorithms;
 mod math;
+mod sieve;
 use pyo3::prelude::*;
 
 fn register_math_submodule(parent_module: &Bound<'_, PyModule>) -> PyResult<()> {
