@@ -68,6 +68,7 @@ pub fn comb(n: i64, k: i64) -> PyResult<BigUint> {
     }
 }
 
+/// Use Newton-Raphson algorithm to compute isqrt
 #[pyfunction]
 pub fn isqrt(n: i64) -> PyResult<i64> {
     if n < 0 {
@@ -75,26 +76,16 @@ pub fn isqrt(n: i64) -> PyResult<i64> {
             "isqrt() argument must be nonnegative",
         ));
     }
-    if n == 0 {
-        return Ok(0);
+    if n < 2 {
+        return Ok(n);
     }
-    if n < 4 {
-        return Ok(1);
+    let mut x0 = n / 2;
+    let mut x1 = (x0 + n / x0) / 2;
+    while x1 < x0 {
+        x0 = x1;
+        x1 = (x0 + n / x0) / 2;
     }
-    let mut low = 0;
-    let mut high = n;
-    while low < high {
-        let mid = (low + high) >> 1;
-        let mid_squared = mid * mid;
-        if mid_squared > n {
-            high = mid;
-        } else if mid_squared == n || (mid + 1) * (mid + 1) > n {
-            return Ok(mid);
-        } else {
-            low = mid;
-        }
-    }
-    Ok(low)
+    Ok(x0)
 }
 
 #[pyfunction]
