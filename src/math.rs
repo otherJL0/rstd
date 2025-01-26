@@ -30,9 +30,9 @@ fn factorial_biguint(n: u64) -> BigUint {
 }
 
 #[inline(always)]
-fn _factorial(end: u64, start: u64) -> BigUint {
-    let mut product = BigUint::from(end);
-    for i in (start + 1..end).rev() {
+fn product_range(end: u64, start: u64) -> BigUint {
+    let mut product = BigUint::one();
+    for i in start..=end {
         product *= BigUint::from(i);
     }
     product
@@ -54,13 +54,18 @@ pub fn factorial(n: i64) -> PyResult<BigUint> {
 }
 
 #[pyfunction]
-pub fn comb(n: i64, k: i64) -> BigUint {
-    if k > n {
-        return BigUint::ZERO;
+pub fn comb(n: i64, k: i64) -> PyResult<BigUint> {
+    if n < 0 {
+        Err(PyValueError::new_err(
+            "factorial() not defined for negative values",
+        ))
+    } else if k > n {
+        Ok(BigUint::ZERO)
+    } else {
+        let k = k.min(n - k) as u64;
+        let n = n as u64;
+        Ok(product_range(n - k, n) / factorial(k as i64).unwrap())
     }
-    let k = k.min(n - k) as u64;
-    let n = n as u64;
-    _factorial(n - k, n) / _factorial(0, k)
 }
 
 #[pyfunction]
@@ -92,13 +97,13 @@ pub fn isqrt(n: i64) -> PyResult<i64> {
 pub fn perm(n: i64, k: Option<i64>) -> BigUint {
     let n = n as u64;
     match k {
-        None => _factorial(0, n),
+        None => product_range(1, n),
         Some(_k) => {
             let _k = _k as u64;
             if _k > n {
                 BigUint::ZERO
             } else {
-                _factorial(n - _k, n)
+                product_range(n - _k, n)
             }
         }
     }
