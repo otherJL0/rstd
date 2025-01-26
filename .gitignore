@@ -70,3 +70,9 @@ docs/_build/
 
 # Pyenv
 .python-version
+
+# asv
+.asv
+project/
+
+.envrc
