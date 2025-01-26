@@ -25,3 +25,13 @@ class Comb:
         for n in range(0, 1500, 2):
             for k in range(0, n, 2):
                 _ = rsmath.comb(n, k)
+
+
+class ISqrt:
+    def time_python(self):
+        for n in range(10000000):
+            _ = pymath.isqrt(n)
+
+    def time_rust(self):
+        for n in range(10000000):
+            _ = pymath.isqrt(n)

@@ -70,6 +70,11 @@ pub fn comb(n: i64, k: i64) -> PyResult<BigUint> {
 
 #[pyfunction]
 pub fn isqrt(n: i64) -> PyResult<i64> {
+    if n < 0 {
+        return Err(PyValueError::new_err(
+            "isqrt() argument must be nonnegative",
+        ));
+    }
     if n == 0 {
         return Ok(0);
     }
