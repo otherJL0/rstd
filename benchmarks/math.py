@@ -34,4 +34,4 @@ class ISqrt:
 
     def time_rust(self):
         for n in range(10000000):
-            _ = pymath.isqrt(n)
+            _ = rsmath.isqrt(n)
