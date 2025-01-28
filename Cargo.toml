@@ -1,7 +1,20 @@
 [package]
 name = "rstd"
 version = "0.1.0"
+description = "A dropin replacement for the Python standard library"
+repository = "https://github.com/otherJL0/rstd"
 edition = "2024"
+readme = "README.md"
+license = "MIT"
+keywords = ["pyo3", "maturin", "python", "std", "stl"]
+categories = ["python"]
+
+[lints.clippy]
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+style = { level = "warn", priority = -1 }
+cast_sign_loss = "allow"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]

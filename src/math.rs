@@ -29,7 +29,6 @@ fn factorial_biguint(n: u64) -> BigUint {
     product
 }
 
-#[inline(always)]
 fn product_range(end: u64, start: u64) -> BigUint {
     let mut product = BigUint::one();
     for i in start..=end {
@@ -62,9 +61,9 @@ pub fn comb(n: i64, k: i64) -> PyResult<BigUint> {
     } else if k > n {
         Ok(BigUint::ZERO)
     } else {
-        let k = k.min(n - k) as u64;
+        let k = k.min(n - k);
         let n = n as u64;
-        Ok(product_range(n - k, n) / factorial(k as i64).unwrap())
+        Ok(product_range(n - k as u64, n) / factorial(k).unwrap())
     }
 }
 
@@ -94,12 +93,12 @@ pub fn perm(n: i64, k: Option<i64>) -> BigUint {
     let n = n as u64;
     match k {
         None => product_range(1, n),
-        Some(_k) => {
-            let _k = _k as u64;
-            if _k > n {
+        Some(start) => {
+            let start = start as u64;
+            if start > n {
                 BigUint::ZERO
             } else {
-                product_range(n - _k, n)
+                product_range(n - start, n)
             }
         }
     }
@@ -128,8 +127,7 @@ mod tests {
             if let Ok(greater_result) = isqrt(square + 1) {
                 assert_eq!(
                     greater_result, i,
-                    "one greater of square {} should be {}",
-                    greater_result, i,
+                    "one greater of square {greater_result} should be {i}",
                 );
             }
         }
@@ -141,6 +139,6 @@ mod tests {
             (i64::MIN..i64::MAX).for_each(|n| {
                 let _ = isqrt(n);
             });
-        })
+        });
     }
 }
